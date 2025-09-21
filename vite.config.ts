@@ -1,34 +1,35 @@
-
 import react from '@vitejs/plugin-react-swc'
 import { defineConfig, UserConfig } from 'vite'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  let build: UserConfig['build'], esbuild: UserConfig['esbuild'], define: UserConfig['define']
-
-  if (mode === 'development') {
-    build = {
-      minify: false,
-    }
-
-    esbuild = {
-      jsxDev: true,
-    }
-
-    define = {
-      'process.env.NODE_ENV': '"development"',
-      __DEV__: 'true',
-    }
-  }
-
-  return {
+  const config: UserConfig = {
     plugins: [react()],
-    build,
-    esbuild,
-    define,
     optimizeDeps: {
       exclude: ['lucide-react'],
     },
   }
-})
 
+  if (mode === 'development') {
+    config.build = {
+      minify: false,
+    }
+
+    config.esbuild = {
+      jsxDev: true,
+    }
+
+    config.define = {
+      'process.env.NODE_ENV': '"development"',
+      __DEV__: 'true',
+    }
+  } else {
+    // explicitly set production define
+    config.define = {
+      'process.env.NODE_ENV': '"production"',
+      __DEV__: 'false',
+    }
+  }
+
+  return config
+})
